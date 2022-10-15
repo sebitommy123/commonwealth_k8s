@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment
+  labels:
+    app: globalserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: globalserver
+  template:
+    metadata:
+      labels:
+        app: globalserver
+    spec:
+      containers:
+        - name: globalserver
+          image: sebitommy123/global_server:latest
+          ports:
+            - containerPort: 3002
+              name: globalserver
+          env:
+            - name: MY_ENDPOINT
+              value: https://commonwealth.zubatomic.com:3002
+            - name: PORT
+              value: "3002"
+            - name: CLIENTORIGIN
+              value: https://commonwealth-18178.web.app
+            - name: REGIONS
+              value: "[{\"name\":\"408, 2301 Durant Ave\",\"mainServers\":[\"https://commonwealth.zubatomic.com:3010\"]}]"
