@@ -1,0 +1,11 @@
+resources:
+  - "global-server.yaml"
+configMapGenerator:
+  - name: general
+    envs:
+      - config/general.properties
+  - name: globalserver
+    files:
+      - regions=config/regions.json
+    envs:
+      - config/globalserver.properties

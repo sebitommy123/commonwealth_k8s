@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment
+  name: globalserver
   labels:
     app: globalserver
 spec:
@@ -21,11 +21,23 @@ spec:
             - containerPort: 3002
               name: globalserver
           env:
-            - name: MY_ENDPOINT
-              value: https://commonwealth.zubatomic.com:3002
+            - name: kubec
+              valueFrom:
+                configMapKeyRef:
+                  name: globalserver
+                  key: endpoint
             - name: PORT
-              value: "3002"
+              valueFrom:
+                configMapKeyRef:
+                  name: globalserver
+                  key: port
             - name: CLIENTORIGIN
-              value: https://commonwealth-18178.web.app
+              valueFrom:
+                configMapKeyRef:
+                  name: general
+                  key: client_url_origin
             - name: REGIONS
-              value: "[{\"name\":\"408, 2301 Durant Ave\",\"mainServers\":[\"https://commonwealth.zubatomic.com:3010\"]}]"
+              valueFrom:
+                configMapKeyRef:
+                  name: globalserver
+                  key: regions
