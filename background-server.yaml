@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backgroundserver
+  labels:
+    app: backgroundserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backgroundserver
+  template:
+    metadata:
+      labels:
+        app: backgroundserver
+    spec:
+      containers:
+        - name: backgroundserver
+          image: sebitommy123/background:latest
+          env:
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: region
+            - name: DDB_TABLE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: ddb_table_name
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: secret_access_key
+          volumeMounts:
+            - mountPath: /etc/letsencrypt/live/commonwealth.zubatomic.com
+              name: ssl
+              readOnly: true
+      volumes:
+        - name: ssl
+          secret:
+            secretName: ssl
+            optional: true

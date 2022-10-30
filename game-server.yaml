@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gameserver
+  labels:
+    app: gameserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gameserver
+  template:
+    metadata:
+      labels:
+        app: gameserver
+    spec:
+      containers:
+        - name: gameserver
+          image: sebitommy123/game_server:latest
+          ports:
+            - containerPort: 30000
+              name: gameserver
+            - containerPort: 30042
+              name: gameserver-int
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: gameserver
+                  key: port
+            - name: INTERNAL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: gameserver
+                  key: internal_port
+            - name: CLIENTORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: general
+                  key: client_url_origin
+            - name: MY_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: gameserver
+                  key: endpoint
+            - name: MAIN_SERVER_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: mainserver
+                  key: endpoint
+            - name: MY_INTERNAL_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: gameserver
+                  key: internal_endpoint
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: region
+            - name: DDB_TABLE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: ddb_table_name
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws
+                  key: secret_access_key
+          volumeMounts:
+            - mountPath: /etc/letsencrypt/live/commonwealth.zubatomic.com
+              name: ssl
+              readOnly: true
+      volumes:
+        - name: ssl
+          secret:
+            secretName: ssl
+            optional: true

@@ -1,5 +1,11 @@
 resources:
   - "global-server.yaml"
+  - "global-server-service.yaml"
+  - "main-server.yaml"
+  - "main-server-service.yaml"
+  - "game-server.yaml"
+  - "game-server-service.yaml"
+  - "background-server.yaml"
 configMapGenerator:
   - name: general
     envs:
@@ -9,3 +15,19 @@ configMapGenerator:
       - regions=config/regions.json
     envs:
       - config/globalserver.properties
+  - name: mainserver
+    envs:
+      - config/mainserver.properties
+  - name: gameserver
+    envs:
+      - config/gameserver.properties
+secretGenerator:
+  - name: ssl
+    files:
+      - cert.pem=config/secrets/cert.pem
+      - chain.pem=config/secrets/chain.pem
+      - fullchain.pem=config/secrets/fullchain.pem
+      - privkey.pem=config/secrets/privkey.pem
+  - name: aws
+    envs:
+      - config/secrets/aws.properties

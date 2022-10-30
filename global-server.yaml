@@ -18,10 +18,10 @@ spec:
         - name: globalserver
           image: sebitommy123/global_server:latest
           ports:
-            - containerPort: 3002
+            - containerPort: 30002
               name: globalserver
           env:
-            - name: kubec
+            - name: MY_ENDPOINT
               valueFrom:
                 configMapKeyRef:
                   name: globalserver
@@ -41,3 +41,12 @@ spec:
                 configMapKeyRef:
                   name: globalserver
                   key: regions
+          volumeMounts:
+            - mountPath: /etc/letsencrypt/live/commonwealth.zubatomic.com
+              name: ssl
+              readOnly: true
+      volumes:
+        - name: ssl
+          secret:
+            secretName: ssl
+            optional: true
